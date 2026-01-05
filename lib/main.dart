@@ -95,7 +95,7 @@ class _MainAppState extends State<MainApp> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Create router once, after AuthBloc is available in the widget tree.
-    _router ??= createRouter(context.read<AuthBloc>());
+    _router ??= createRouter(authBloc: context.read<AuthBloc>());
   }
 
   @override
