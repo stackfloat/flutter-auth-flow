@@ -42,17 +42,19 @@ class SigninBloc extends Bloc<SigninEvent, SigninState> {
 
   void _onSigninSubmitted(SigninSubmitted event, Emitter<SigninState> emit) async {
     // Perform all validations on submit
+    final validationErrors = {
+      ...state.errors,
+      ..._validateEmail(state.email),
+      ..._validatePassword(state.password),
+    };
+
     emit(state.copyWith(
       formSubmitted: true,
-      errors: {
-        ...state.errors,
-        ..._validateEmail(state.email),
-        ..._validatePassword(state.password),
-      },
+      errors: validationErrors,
     ));
 
     // Check if form is valid (all errors are null)
-    final isValid = state.errors.values.every((error) => error == null);
+    final isValid = validationErrors.values.every((error) => error == null);
 
     if (isValid) {
       emit(state.copyWith(status: SigninStatus.loading));
@@ -72,9 +74,7 @@ class SigninBloc extends Bloc<SigninEvent, SigninState> {
           emit(state.copyWith(status: SigninStatus.success, user: user));
         },
       );
-    } else {
-      emit(state.copyWith(status: SigninStatus.failure));
-    }
+    } 
   }
 
   // Validation methods

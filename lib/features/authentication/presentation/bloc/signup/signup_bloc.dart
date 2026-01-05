@@ -86,21 +86,23 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     Emitter<SignupState> emit,
   ) async {
     // Perform all validations on submit
+    final validationErrors = {
+      ...state.errors,
+      ..._validateName(state.name),
+      ..._validateEmail(state.email),
+      ..._validatePassword(state.password),
+      ..._validateConfirmPassword(state.confirmPassword),
+    };
+
     emit(
       state.copyWith(
         formSubmitted: true,
-        errors: {
-          ...state.errors,
-          ..._validateName(state.name),
-          ..._validateEmail(state.email),
-          ..._validatePassword(state.password),
-          ..._validateConfirmPassword(state.confirmPassword),
-        },
+        errors: validationErrors,
       ),
     );
 
     // Check if form is valid (all errors are null)
-    final isValid = state.errors.values.every((error) => error == null);
+    final isValid = validationErrors.values.every((error) => error == null);
 
     if (isValid) {
       emit(state.copyWith(status: SignupStatus.loading));
@@ -154,8 +156,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
     if (password.isEmpty) {
       return {'password': 'Password is required'};
-    } else if (password.length < 8) {
-      return {'password': 'Password must be 8+ characters'};
+    } else if (password.length < 6) {
+      return {'password': 'Password must be at least 6 characters'};
     }
 
     return {'password': null};
