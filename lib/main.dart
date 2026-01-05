@@ -10,7 +10,11 @@ import 'package:furniture_ecommerce_app/core/routing/app_router.dart';
 import 'package:furniture_ecommerce_app/core/services/dependency_injection/injection_container.dart';
 import 'package:furniture_ecommerce_app/core/services/logging/app_bloc_observer.dart';
 import 'package:furniture_ecommerce_app/core/theme/app_theme.dart';
+import 'package:furniture_ecommerce_app/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_bloc.dart';
+import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_event.dart';
 import 'package:furniture_ecommerce_app/firebase_options.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runZonedGuarded(
@@ -59,8 +63,8 @@ void main() {
       }
 
       runApp(
-        BlocProvider.value(
-          value: authBloc,
+        BlocProvider(
+          create: (_) => AuthBloc(sl<AuthRepository>())..add(AppStarted()),
           child: const MainApp(),
         ),
       );
@@ -77,8 +81,22 @@ void main() {
   );
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  GoRouter? _router;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Create router once, after AuthBloc is available in the widget tree.
+    _router ??= createRouter(context.read<AuthBloc>());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +105,7 @@ class MainApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) => MaterialApp.router(
-        routerConfig: router,
+        routerConfig: _router!,
         debugShowCheckedModeBanner: false,
         title: 'Furniture Ecommerce App',
         theme: AppTheme.lightTheme,
