@@ -12,7 +12,7 @@ import 'package:furniture_ecommerce_app/core/services/logging/app_bloc_observer.
 import 'package:furniture_ecommerce_app/core/theme/app_theme.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_bloc.dart';
-import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_event.dart';
+import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_state.dart';
 import 'package:furniture_ecommerce_app/firebase_options.dart';
 import 'package:go_router/go_router.dart';
 
@@ -40,7 +40,7 @@ void main() {
       };
 
       PlatformDispatcher.instance.onError = (error, stack) {
-        print('PlatformDispatcher.instance.onError');
+        if (kDebugMode) debugPrint('PlatformDispatcher.instance.onError');
         if (!kReleaseMode) {
           FlutterError.dumpErrorToConsole(
             FlutterErrorDetails(exception: error, stack: stack),
@@ -62,15 +62,28 @@ void main() {
         rethrow;
       }
 
+      // Option C: hydrate auth BEFORE building the router to avoid any
+      // sign-in/home flicker caused by AuthStatus.unknown redirects.
+      final authRepository = sl<AuthRepository>();
+      final user = await authRepository.getUser();
+      final initialAuthState = user != null
+          ? AuthState.authenticated(user)
+          : AuthState.unauthenticated();
+      final initialLocation =
+          initialAuthState.status == AuthStatus.authenticated ? '/' : '/signin';
+
       runApp(
         BlocProvider(
-          create: (_) => AuthBloc(sl<AuthRepository>())..add(AppStarted()),
-          child: const MainApp(),
+          create: (_) => AuthBloc(
+            authRepository,
+            initialState: initialAuthState,
+          ),
+          child: MainApp(initialLocation: initialLocation),
         ),
       );
     },
     (error, stack) {
-      print('runZonedGuarded');
+      if (kDebugMode) debugPrint('runZonedGuarded');
       if (!kReleaseMode) {
         FlutterError.dumpErrorToConsole(
           FlutterErrorDetails(exception: error, stack: stack),
@@ -82,7 +95,12 @@ void main() {
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp({super.key});
+  const MainApp({
+    super.key,
+    required this.initialLocation,
+  });
+
+  final String initialLocation;
 
   @override
   State<MainApp> createState() => _MainAppState();
@@ -95,7 +113,11 @@ class _MainAppState extends State<MainApp> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Create router once, after AuthBloc is available in the widget tree.
-    _router ??= createRouter(authBloc: context.read<AuthBloc>());
+    final authBloc = context.read<AuthBloc>();
+    _router ??= createRouter(
+      authBloc: authBloc,
+      initialLocation: widget.initialLocation,
+    );
   }
 
   @override

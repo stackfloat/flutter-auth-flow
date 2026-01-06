@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_event.dart';
@@ -6,20 +7,22 @@ import 'package:furniture_ecommerce_app/features/authentication/presentation/blo
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository authRepository;
 
-  AuthBloc(this.authRepository) : super(AuthState.unknown()) {
-    print('AuthBloc constructed');
+  AuthBloc(
+    this.authRepository, {
+    AuthState? initialState,
+  }) : super(initialState ?? AuthState.unknown()) {
+    if (kDebugMode) debugPrint('AuthBloc constructed');
     on<AppStarted>(_onAppStarted);
     on<LoggedIn>(_onLoggedIn);
     on<LoggedOut>(_onLoggedOut);
   }
 
   Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
-
-    print('onAppStarted');
+    if (kDebugMode) debugPrint('onAppStarted');
 
     final user = await authRepository.getUser();
 
-    print('user: $user');
+    if (kDebugMode) debugPrint('user: $user');
 
     if (user != null) {
       emit(AuthState.authenticated(user));
