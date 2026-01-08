@@ -1,4 +1,4 @@
-import 'package:furniture_ecommerce_app/core/domain/usecases/usecase.dart';
+import 'package:furniture_ecommerce_app/core/usecases/usecase.dart';
 import 'package:furniture_ecommerce_app/core/utils/typedef.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/entities/user.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/repositories/auth_repository.dart';
