@@ -1,21 +1,59 @@
-import 'package:furniture_ecommerce_app/features/authentication/data/models/user_model.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:furniture_ecommerce_app/core/errors/failure.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/entities/user.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:furniture_ecommerce_app/features/authentication/domain/usecases/signin_usecase.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
 void main() {
-  final userModel = UserModel(
-    id: 1,
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    token: 'token',
-  );
+  late SigninUseCase signinUseCase;
+  late MockAuthRepository mockAuthRepository;
 
-  test('UserModel should be a subclass of User', () {
+  setUp(() {
+    mockAuthRepository = MockAuthRepository();
+    signinUseCase = SigninUseCase(mockAuthRepository);
+  });
+
+  final tUserEntity = User(id: 1, name: 'Test User', email: 'test@example.com');
+  final tEmail = 'test@example.com';
+  final tPassword = 'password';
+
+  test('should call the [AuthRepository.login] method', () async {
+    // Arrange
+    when(
+      () => mockAuthRepository.login(any(), any()),
+    ).thenAnswer((_) async => Right(tUserEntity));
+
+    // Act
+    final result = await signinUseCase(
+      SigninParams(email: tEmail, password: tPassword),
+    );
+
     // Assert
-    expect(userModel, isA<User>());
+    verify(() => mockAuthRepository.login(tEmail, tPassword)).called(1);
+
+    expect(result, Right(tUserEntity));
+
+    verifyNoMoreInteractions(mockAuthRepository);
+  });
+
+  test('should return [ApiFailure] when the API call fails', () async {
+    // Arrange
+    when(
+      () => mockAuthRepository.login(any(), any()),
+    ).thenAnswer((_) async => Left(ApiFailure(message: 'API call failed')));
+
+    // Act
+    final result = await signinUseCase(
+      SigninParams(email: tEmail, password: tPassword),
+    );
+
+    // Assert
+    verify(() => mockAuthRepository.login(tEmail, tPassword)).called(1);
+    expect(result, Left(ApiFailure(message: 'API call failed')));
+    verifyNoMoreInteractions(mockAuthRepository);
   });
 }
