@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/entities/user.dart';
 
 enum SignupStatus { initial, loading, success, failure }
 
-class SignupState {
+class SignupState extends Equatable {
   final String name;
   final String email;
   final String password;
@@ -27,6 +28,9 @@ class SignupState {
     this.revealConfirmPassword = false,
     this.user,
   });
+
+  @override
+  List<Object?> get props => [name, email, password, confirmPassword, formSubmitted, errors, status, revealPassword, revealConfirmPassword, user];
 
   bool get isValid =>
       errors.isEmpty &&

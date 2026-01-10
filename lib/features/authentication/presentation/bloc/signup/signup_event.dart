@@ -1,34 +1,55 @@
-abstract class SignupEvent {}
+import 'package:equatable/equatable.dart';
+
+abstract class SignupEvent extends Equatable {
+  const SignupEvent();
+  @override
+  List<Object?> get props => [];
+}
 
 class NameChanged extends SignupEvent {
   final String name;
-  NameChanged(this.name);
+  const NameChanged(this.name);
+  @override
+  List<Object?> get props => [name];
 }
 
 class EmailChanged extends SignupEvent {
   final String email;
-  EmailChanged(this.email);
+  const EmailChanged(this.email);
+  @override
+  List<Object?> get props => [email];
 }
 
 class PasswordChanged extends SignupEvent {
   final String password;
-  PasswordChanged(this.password);
+  const PasswordChanged(this.password);
+  @override
+  List<Object?> get props => [password];
 }
 
 class ConfirmPasswordChanged extends SignupEvent {
   final String confirmPassword;
-  ConfirmPasswordChanged(this.confirmPassword);
+  const ConfirmPasswordChanged(this.confirmPassword);
+  @override
+  List<Object?> get props => [confirmPassword];
 }
 
-class SignupSubmitted extends SignupEvent {}
+class SignupSubmitted extends SignupEvent {
+  @override
+  List<Object?> get props => [];
+}
 
 
 class RevealPassword extends SignupEvent {
   final bool revealPassword;
-  RevealPassword(this.revealPassword);
+  const RevealPassword(this.revealPassword);
+  @override
+  List<Object?> get props => [revealPassword];
 }
 
 class RevealConfirmPassword extends SignupEvent {
   final bool revealConfirmPassword;
-  RevealConfirmPassword(this.revealConfirmPassword);
+  const RevealConfirmPassword(this.revealConfirmPassword);
+  @override
+  List<Object?> get props => [revealConfirmPassword];
 }
