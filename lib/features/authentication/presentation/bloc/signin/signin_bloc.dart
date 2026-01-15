@@ -1,16 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:furniture_ecommerce_app/core/errors/failure.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/entities/user.dart';
-import 'package:furniture_ecommerce_app/features/authentication/domain/errors/validation_exception.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/failures/account_disabled_failure.dart';
-import 'package:furniture_ecommerce_app/features/authentication/domain/failures/auth_failure.dart';
-import 'package:furniture_ecommerce_app/features/authentication/domain/failures/email_already_exists_failure.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/failures/invalid_credentials_failure.dart';
-import 'package:furniture_ecommerce_app/features/authentication/domain/failures/username_already_exists_failure.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/usecases/signin_usecase.dart';
 import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/signin/signin_errors.dart';
-import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/signup/signup_errors.dart';
 import 'package:meta/meta.dart';
 
 part 'signin_event.dart';
@@ -128,36 +122,5 @@ class SigninBloc extends Bloc<SigninEvent, SigninState> {
       return 'Password must be at least 8 characters';
     }
     return null;
-  }
-
-  SigninErrors _mapDomainExceptionToUiErrors(ValidationException exception) {
-    if (exception is InvalidEmailException) {
-      return const SigninErrors(email: 'Invalid email');
-    }
-    return SigninErrors.empty;
-  }
-
-  SigninErrors _mapFailureToUiErrors(Failure failure) {
-    if (failure is InvalidCredentialsFailure) {
-      return const SigninErrors(email: 'Invalid credentials');
-    }
-
-    if (failure is AccountDisabledFailure) {
-      return const SigninErrors(email: 'Account disabled');
-    }
-
-    return SigninErrors.empty;
-  }
-
-  String _mapFailureToGlobalMessage(Failure failure) {
-    if (failure is NetworkFailure) {
-      return 'Network error. Please check your connection.';
-    }
-
-    if (failure is ServerFailure) {
-      return 'Something went wrong. Please try again later.';
-    }
-
-    return 'Unexpected error occurred1.';
   }
 }

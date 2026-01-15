@@ -32,6 +32,4 @@ void main() {
 
     expect(result, isA<UserModel>());
   });
-
-  //TODO test other things 
 }

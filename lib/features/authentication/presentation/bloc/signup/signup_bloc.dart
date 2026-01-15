@@ -241,9 +241,6 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
   String _mapFailureToGlobalMessage(Failure failure) {
 
-
-    print(failure);
-
     if (failure is NetworkFailure) {
       return 'Network error. Please check your connection.';
     }
