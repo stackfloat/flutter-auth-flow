@@ -10,14 +10,14 @@ class UserModel extends User {
     required this.token,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromApiJson(Map<String, dynamic> json) {
     try {
       _validateResponse(json);
 
       final data = json['data'] as Map<String, dynamic>;
       final user = data['user'] as Map<String, dynamic>;
 
-    return UserModel(
+      return UserModel(
         id: user['id'] as int,
         name: user['name'] as String,
         email: user['email'] as String,
@@ -25,6 +25,25 @@ class UserModel extends User {
       );
     } catch (e) {
       throw FormatException('Failed to parse user data: ${e.toString()}');
+    }
+  }
+
+  factory UserModel.fromLocalJson(Map<String, dynamic> json) {
+    try {
+      if (!json.containsKey('id') ||
+          !json.containsKey('name') ||
+          !json.containsKey('email')) {
+        throw const FormatException('Invalid local user data');
+      }
+
+      return UserModel(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        email: json['email'] as String,
+        token: json['token'] as String? ?? '',
+      );
+    } catch (e) {
+      throw FormatException('Failed to parse local user data: ${e.toString()}');
     }
   }
 
@@ -77,13 +96,12 @@ class UserModel extends User {
     }
   }
 
-  /// Converts [UserModel] to JSON for API requests.
-  Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'email': email, 'token': token};
+  /// Converts [UserModel] to JSON for local persistence.
+  Map<String, dynamic> toLocalJson() {
+    return {'id': id, 'name': name, 'email': email};
   }
 
   /// Converts [UserModel] to domain [User] entity.
-  /// The token is excluded as it's stored separately in secure storage.
   User toEntity() {
     return User(id: id, name: name, email: email);
   }

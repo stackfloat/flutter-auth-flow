@@ -1,4 +1,6 @@
-class SignupErrors {
+import 'package:equatable/equatable.dart';
+
+class SignupErrors extends Equatable {
   final String? name;
   final String? email;
   final String? password;
@@ -35,4 +37,7 @@ class SignupErrors {
 
   static const _unset = Object();
   static const empty = SignupErrors();
+
+  @override
+  List<Object?> get props => [name, email, password, confirmPassword];
 }

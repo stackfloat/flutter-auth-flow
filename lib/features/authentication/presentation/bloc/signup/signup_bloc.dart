@@ -9,6 +9,7 @@ import 'package:furniture_ecommerce_app/features/authentication/domain/usecases/
 import 'package:furniture_ecommerce_app/features/authentication/domain/value_objects/confirmed_password.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/value_objects/email.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/value_objects/name.dart';
+import 'package:furniture_ecommerce_app/features/authentication/domain/value_objects/password.dart';
 import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/signup/signup_errors.dart';
 import 'signup_event.dart';
 import 'signup_state.dart';
@@ -41,6 +42,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     emit(
       state.copyWith(
         name: event.name,
+        serverError: null,
         errors: state.formSubmitted
             ? state.errors.copyWith(name: _nameUxError(event.name))
             : state.errors,
@@ -52,6 +54,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     emit(
       state.copyWith(
         email: event.email,
+        serverError: null,
         errors: state.formSubmitted
             ? state.errors.copyWith(email: _emailUxError(event.email))
             : state.errors,
@@ -63,6 +66,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     emit(
       state.copyWith(
         password: event.password,
+        serverError: null,
         errors: state.formSubmitted
             ? state.errors.copyWith(
                 password: _passwordUxError(event.password),
@@ -83,6 +87,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     emit(
       state.copyWith(
         confirmPassword: event.confirmPassword,
+        serverError: null,
         errors: state.formSubmitted
             ? state.errors.copyWith(
                 confirmPassword: _confirmPasswordUxError(
@@ -99,6 +104,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     SignupSubmitted event,
     Emitter<SignupState> emit,
   ) async {
+    if (state.status == SignupStatus.loading) return;
+
     // 1️⃣ Run UX validation for ALL fields (aggregate)
     final uxErrors = SignupErrors(
       name: _nameUxError(state.name),
@@ -110,7 +117,13 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       ),
     );
 
-    emit(state.copyWith(formSubmitted: true, errors: uxErrors));
+    emit(
+      state.copyWith(
+        formSubmitted: true,
+        errors: uxErrors,
+        serverError: null,
+      ),
+    );
 
     // 2️⃣ If UX errors exist → stop (better UX)
     if (uxErrors.hasErrors) return;
@@ -136,7 +149,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           if (failure is AuthFailure) {
             emit(
               state.copyWith(
-                status: SignupStatus.initial,
+                status: SignupStatus.failure,
                 errors: _mapFailureToUiErrors(failure),
                 serverError: null,
               ),
@@ -144,7 +157,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           } else {
             emit(
               state.copyWith(
-                status: SignupStatus.initial,
+                status: SignupStatus.failure,
                 serverError: _mapFailureToGlobalMessage(failure),
               ),
             );
@@ -169,8 +182,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     if (password.isEmpty) {
       return 'Password is required';
     }
-    if (password.length < 8) {
-      return 'Password must be at least 8 characters';
+    if (!Password.isValid(password)) {
+      return 'Password must be at least ${Password.minLength} characters';
     }
     return null;
   }
@@ -189,8 +202,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     if (name.isEmpty) {
       return 'Name is required';
     }
-    if (name.length < 3) {
-      return 'Name must be at least 3 characters';
+    if (!Name.isValid(name)) {
+      return 'Name must be at least ${Name.minLength} characters';
     }
     return null;
   }
@@ -199,7 +212,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     if (email.isEmpty) {
       return 'Email is required';
     }
-    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+    if (!Email.isValid(email)) {
       return 'Invalid email';
     }
     return null;
@@ -207,7 +220,9 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
   SignupErrors _mapDomainExceptionToUiErrors(ValidationException exception) {
     if (exception is InvalidNameException) {
-      return const SignupErrors(name: 'Name must be at least 3 characters');
+      return SignupErrors(
+        name: 'Name must be at least ${Name.minLength} characters',
+      );
     }
 
     if (exception is InvalidEmailException) {
@@ -215,8 +230,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     }
 
     if (exception is WeakPasswordException) {
-      return const SignupErrors(
-        password: 'Password must be at least 8 characters',
+      return SignupErrors(
+        password: 'Password must be at least ${Password.minLength} characters',
       );
     }
 

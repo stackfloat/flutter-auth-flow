@@ -5,12 +5,12 @@ class Email {
 
   Email(String input)
       : value = input.trim() {
-    if (!_isValid(value)) {
+    if (!isValid(value)) {
       throw const InvalidEmailException();
     }
   }
 
-  static bool _isValid(String email) {
+  static bool isValid(String email) {
     return RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email);
   }
 }

@@ -19,26 +19,28 @@ class LoginScreen extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            return BlocConsumer<SigninBloc, SigninState>(
+            return BlocListener<SigninBloc, SigninState>(
+              listenWhen: (previous, current) =>
+                  previous.status != current.status &&
+                  current.status == SigninStatus.success,
               listener: (context, state) {
-                if (state.status == SigninStatus.success) {
-                  context.read<AuthBloc>().add(
-                      LoggedIn(state.user!),
-                  );
-                } 
+                context.read<AuthBloc>().add(
+                  LoggedIn(state.user!),
+                );
               },
-              builder: (context, state) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - 32,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 40),
+              child: BlocBuilder<SigninBloc, SigninState>(
+                builder: (context, state) {
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight - 32,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 40),
 
                           // Title
                           Text(
@@ -120,12 +122,13 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 24),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             );
           },
         ),

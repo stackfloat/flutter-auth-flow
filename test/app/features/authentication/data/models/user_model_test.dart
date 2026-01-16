@@ -10,7 +10,7 @@ void main() {
   final UserModel userModel = UserModel(id: 1, name: 'John Doe', email: 'john.doe@example.com', token: 'token');
 
 
-  test('should return a [User] when the JSON is valid', () {
+  test('should return a [UserModel] when local JSON is valid', () {
     final json = {
       'id': 1,
       'name': 'John Doe',
@@ -18,17 +18,17 @@ void main() {
       'token': 'token',
     };
 
-    final result = UserModel.fromJson(json);
+    final result = UserModel.fromLocalJson(json);
 
     expect(result, userModel);
   });
 
   
-  test('should return valid model from json', () async {
+  test('should return valid model from API json', () async {
 
     final file = File('test/fixtures/user.json');
     final json = jsonDecode(await file.readAsString());
-    final result = UserModel.fromJson(json);
+    final result = UserModel.fromApiJson(json);
 
     expect(result, isA<UserModel>());
   });

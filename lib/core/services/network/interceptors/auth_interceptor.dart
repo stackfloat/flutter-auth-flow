@@ -1,12 +1,17 @@
 import 'package:dio/dio.dart';
+import 'package:furniture_ecommerce_app/core/services/auth/auth_session_notifier.dart';
 import 'package:furniture_ecommerce_app/core/services/storage/secure_storage_service.dart';
 
 /// Interceptor that automatically adds authentication tokens to requests
 /// and handles 401 Unauthorized responses.
 class AuthInterceptor extends Interceptor {
   final SecureStorageService _secureStorage;
+  final AuthSessionNotifier? _sessionNotifier;
 
-  AuthInterceptor(this._secureStorage);
+  AuthInterceptor(
+    this._secureStorage, {
+    AuthSessionNotifier? sessionNotifier,
+  }) : _sessionNotifier = sessionNotifier;
 
   @override
   Future<void> onRequest(
@@ -24,11 +29,12 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
+    final statusCode = err.response?.statusCode;
+    if (statusCode == 401 || statusCode == 403) {
       // TODO: Implement token refresh logic here
-      // For now, just clear auth data and let the error propagate
+      // For now, just clear auth data and notify listeners
       await _secureStorage.clearAuthData();
-      // You might want to add navigation logic here to redirect to login
+      _sessionNotifier?.notifyUnauthorized();
     }
 
     return handler.next(err);

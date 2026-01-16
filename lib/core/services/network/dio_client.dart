@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:furniture_ecommerce_app/core/errors/failure.dart';
+import 'package:furniture_ecommerce_app/core/services/auth/auth_session_notifier.dart';
 import 'package:furniture_ecommerce_app/core/services/network/interceptors/dio_interceptor.dart';
 import 'package:furniture_ecommerce_app/core/services/storage/secure_storage_service.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -19,9 +20,11 @@ import 'interceptors/auth_interceptor.dart';
 /// - Built-in error handling with automatic conversion to Failure objects
 class DioClient {
   final SecureStorageService _secureStorage;
+  final AuthSessionNotifier? _sessionNotifier;
   late final Dio _dio;
 
-  DioClient(this._secureStorage) {
+  DioClient(this._secureStorage, {AuthSessionNotifier? sessionNotifier})
+      : _sessionNotifier = sessionNotifier {
     _dio = _createDio();
   }
 
@@ -41,7 +44,12 @@ class DioClient {
       ),
     );
 
-    dio.interceptors.add(AuthInterceptor(_secureStorage));
+    dio.interceptors.add(
+      AuthInterceptor(
+        _secureStorage,
+        sessionNotifier: _sessionNotifier,
+      ),
+    );
     dio.interceptors.add(DioInterceptor(_secureStorage));
 
     if (kDebugMode) {
@@ -64,7 +72,7 @@ class DioClient {
   /// ```dart
   /// return _dioClient.handleApiCall<UserModel>(
   ///   () => _dioClient.dio.post('/auth/signup', data: {...}),
-  ///   (response) => UserModel.fromJson(response.data),
+  ///   (response) => UserModel.fromApiJson(response.data),
   /// );
   /// ```
   Future<Either<Failure, T>> handleApiCall<T>(
@@ -88,7 +96,7 @@ class DioClient {
   /// return _dioClient.post<UserModel>(
   ///   '/auth/signup',
   ///   data: {'name': name, 'email': email},
-  ///   parser: (data) => UserModel.fromJson(data),
+  ///   parser: (data) => UserModel.fromApiJson(data),
   /// );
   /// ```
   Future<Either<Failure, T>> post<T>(
@@ -204,9 +212,10 @@ class DioClient {
   }
 
   /// Handles DioException and converts it to ApiFailure.
-  ApiFailure _handleDioException(DioException e) {
+  Failure _handleDioException(DioException e) {
     if (e.response != null) {
       final data = e.response!.data;
+      final statusCode = e.response!.statusCode ?? 0;
 
       // Extract message from server response
       final message = _extractMessage(data);
@@ -216,12 +225,13 @@ class DioClient {
 
       return ApiFailure(
         message: message,
+        statusCode: statusCode,
         errors: errors,
       );
     }
 
     // Handle network/connection errors (no response)
-    return ApiFailure(
+    return NetworkFailure(
       message: _getNetworkErrorMessage(e.type),
     );
   }
@@ -270,8 +280,8 @@ class DioClient {
   }
 
   /// Handles unexpected (non-Dio) exceptions.
-  ApiFailure _handleUnexpectedException(Object e) {
-    return ApiFailure(
+  Failure _handleUnexpectedException(Object e) {
+    return ServerFailure(
       message: 'An unexpected error occurred: ${e.toString()}',
     );
   }

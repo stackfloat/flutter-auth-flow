@@ -1,8 +1,9 @@
+import 'package:equatable/equatable.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/entities/user.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
-class AuthState {
+class AuthState extends Equatable {
   final AuthStatus status;
   final User? user;
 
@@ -19,4 +20,7 @@ class AuthState {
 
   factory AuthState.unauthenticated() =>
       const AuthState(status: AuthStatus.unauthenticated);
+
+  @override
+  List<Object?> get props => [status, user];
 }

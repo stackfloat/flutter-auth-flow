@@ -10,6 +10,7 @@ import 'package:furniture_ecommerce_app/core/routing/app_router.dart';
 import 'package:furniture_ecommerce_app/core/services/dependency_injection/injection_container.dart';
 import 'package:furniture_ecommerce_app/core/services/logging/app_bloc_observer.dart';
 import 'package:furniture_ecommerce_app/core/theme/app_theme.dart';
+import 'package:furniture_ecommerce_app/core/services/auth/auth_session_notifier.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_bloc.dart';
 import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_state.dart';
@@ -63,6 +64,7 @@ void main() {
       // Option C: hydrate auth BEFORE building the router to avoid any
       // sign-in/home flicker caused by AuthStatus.unknown redirects.
       final authRepository = sl<AuthRepository>();
+      final authSessionNotifier = sl<AuthSessionNotifier>();
       final user = await authRepository.getUser();
       final initialAuthState = user != null
           ? AuthState.authenticated(user)
@@ -74,6 +76,7 @@ void main() {
         BlocProvider(
           create: (_) => AuthBloc(
             authRepository,
+            authSessionNotifier,
             initialState: initialAuthState,
           ),
           child: MainApp(initialLocation: initialLocation),

@@ -9,4 +9,6 @@ abstract class AuthRepository {
   ResultFuture<void> logout();
 
   Future<User?> getUser();
+
+  Future<void> clearSession();
 }

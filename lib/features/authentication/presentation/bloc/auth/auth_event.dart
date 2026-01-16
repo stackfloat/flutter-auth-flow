@@ -1,12 +1,29 @@
+import 'package:equatable/equatable.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/entities/user.dart';
 
-abstract class AuthEvent {}
+abstract class AuthEvent extends Equatable {
+  const AuthEvent();
 
-class AppStarted extends AuthEvent {}
+  @override
+  List<Object?> get props => [];
+}
+
+class AppStarted extends AuthEvent {
+  const AppStarted();
+}
 
 class LoggedIn extends AuthEvent {
   final User user;
-  LoggedIn(this.user);
+  const LoggedIn(this.user);
+
+  @override
+  List<Object?> get props => [user];
 }
 
-class LoggedOut extends AuthEvent {}
+class LoggedOut extends AuthEvent {
+  const LoggedOut();
+}
+
+class SessionExpired extends AuthEvent {
+  const SessionExpired();
+}

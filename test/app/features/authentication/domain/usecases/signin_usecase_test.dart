@@ -2,6 +2,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:furniture_ecommerce_app/core/errors/failure.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/entities/user.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:furniture_ecommerce_app/features/authentication/domain/value_objects/email.dart';
+import 'package:furniture_ecommerce_app/features/authentication/domain/value_objects/password.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:furniture_ecommerce_app/features/authentication/domain/usecases/signin_usecase.dart';
 import 'package:mocktail/mocktail.dart';
@@ -18,8 +20,8 @@ void main() {
   });
 
   final tUserEntity = User(id: 1, name: 'Test User', email: 'test@example.com');
-  final tEmail = 'test@example.com';
-  final tPassword = 'password';
+  final tEmail = Email('test@example.com');
+  final tPassword = Password('password123');
 
   test('should call the [AuthRepository.login] method', () async {
     // Arrange
@@ -33,7 +35,8 @@ void main() {
     );
 
     // Assert
-    verify(() => mockAuthRepository.login(tEmail, tPassword)).called(1);
+    verify(() => mockAuthRepository.login(tEmail.value, tPassword.value))
+        .called(1);
 
     expect(result, Right(tUserEntity));
 

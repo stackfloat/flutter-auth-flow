@@ -1,5 +1,6 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:furniture_ecommerce_app/core/services/auth/auth_session_notifier.dart';
 import 'package:furniture_ecommerce_app/core/services/logging/app_logger.dart';
 import 'package:furniture_ecommerce_app/core/services/network/dio_client.dart';
 import 'package:furniture_ecommerce_app/core/services/storage/secure_storage_service.dart';
@@ -62,6 +63,11 @@ Future<void> initDependencies() async {
     ),
   );
 
+  // Auth Session Notifier
+  sl.registerLazySingleton<AuthSessionNotifier>(
+    () => AuthSessionNotifier(),
+  );
+
   // Secure Storage Service
   sl.registerLazySingleton<SecureStorageService>(
     () => SecureStorageServiceImpl(
@@ -75,7 +81,10 @@ Future<void> initDependencies() async {
 
   // Network Client
   sl.registerLazySingleton<DioClient>(
-    () => DioClient(sl<SecureStorageService>()),
+    () => DioClient(
+      sl<SecureStorageService>(),
+      sessionNotifier: sl<AuthSessionNotifier>(),
+    ),
   );
 
   // ---------------------------------------------------------------------------
