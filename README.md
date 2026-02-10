@@ -1,3 +1,3 @@
-# furniture_ecommerce_app
+# Flutter auth flow 
 
-A new Flutter project.
+
