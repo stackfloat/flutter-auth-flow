@@ -41,12 +41,18 @@ class CategoryCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.h),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 34 / 2, // ~17
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF2B2B2B),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 34 / 2, // ~17
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF2B2B2B),
+                ),
               ),
             ),
           ],

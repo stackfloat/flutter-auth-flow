@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecommerce_app/core/common/widgets/elevated_button_small_widget.dart';
-import 'package:furniture_ecommerce_app/core/common/widgets/elevated_button_widget.dart';
 
 class ProductCard extends StatelessWidget {
   final String title;
@@ -62,18 +61,28 @@ class ProductCard extends StatelessWidget {
                   // Second column: price + button (center vertically, left aligned)
                   Expanded(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          '\$${price.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
+                        Expanded(
+                          child: Text(
+                            '\$${price.toStringAsFixed(2)}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
-                       ElevatedButtonSmallWidget(buttonLabel: 'SHOP', onPressEvent: onShopTap ?? () {})
+                        const SizedBox(width: 8),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 120),
+                          child: ElevatedButtonSmallWidget(
+                            buttonLabel: 'SHOP',
+                            onPressEvent: onShopTap ?? () {},
+                          ),
+                        ),
                       ],
                     ),
                   ),

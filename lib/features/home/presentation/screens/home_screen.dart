@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:furniture_ecommerce_app/core/theme/app_colors.dart';
-import 'package:furniture_ecommerce_app/core/theme/app_spacing.dart';
 import 'package:furniture_ecommerce_app/core/theme/theme_extensions.dart';
-import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_bloc.dart';
-import 'package:furniture_ecommerce_app/features/authentication/presentation/bloc/auth/auth_event.dart';
 import 'package:furniture_ecommerce_app/features/home/presentation/widgets/category_card.dart';
 import 'package:furniture_ecommerce_app/features/home/presentation/widgets/header_basket_icon.dart';
 import 'package:furniture_ecommerce_app/features/home/presentation/widgets/product_card.dart';
@@ -21,7 +16,6 @@ class HomeScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
             child: SafeArea(
-              bottom: false,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    height: 170.h,
+                    height: 190.h,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: 6,
