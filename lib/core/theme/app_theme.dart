@@ -53,8 +53,8 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primary,
-          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
           elevation: 0,
           padding: EdgeInsets.symmetric(
             vertical: 14.h,
@@ -65,7 +65,7 @@ class AppTheme {
           ),
           textStyle: TextStyle(
             fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

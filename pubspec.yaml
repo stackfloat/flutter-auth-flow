@@ -1,6 +1,6 @@
 name: furniture_ecommerce_app
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -39,6 +39,7 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/images/
 
 # Flutter Native Splash configuration
 flutter_native_splash:

@@ -3,6 +3,6 @@ import 'app_typography.dart';
 
 extension ThemeX on BuildContext {
   AppTypography get typography {
-    return Theme.of(this).extension<AppTypography>() ?? AppTypography.fallback();
+    return Theme.of(this).extension<AppTypography>() ?? AppTypography.scaled();
   }
 }

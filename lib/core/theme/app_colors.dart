@@ -10,9 +10,9 @@ class AppColors {
   static const secondaryContainer = Color(0xFFD1FAE5);
 
   // Background
-  static const lightBackground = Color(0xFFFFFFFF);
-  static const surface = Color(0xFFF8FAFC);
-  static const inputFillLight = Color(0xFFF3F4F6);
+  static const lightBackground = Color(0xFFF2F6F9);
+  static const surface = Color(0xFFF8FAFC); 
+  static const inputFillLight = Color(0xFFf2f6f9);
 
   // Text
   static const lightText = Color(0xFF111827);
@@ -24,5 +24,6 @@ class AppColors {
   static const warning = Color(0xFFF59E0B);
 
   // Borders
-  static const border = Color(0xFFE5E7EB);
+  static const border = Color(0xFFC3C3C3);
+  
 }
