@@ -11,6 +11,8 @@ import 'package:furniture_ecommerce_app/features/authentication/presentation/scr
 import 'package:furniture_ecommerce_app/features/authentication/presentation/screens/signup_screen.dart';
 import 'package:furniture_ecommerce_app/features/cart/presentation/screens/cart_screen.dart';
 import 'package:furniture_ecommerce_app/features/home/presentation/screens/home_screen.dart';
+import 'package:furniture_ecommerce_app/features/products/presentation/screens/categories_screen.dart';
+import 'package:furniture_ecommerce_app/features/products/presentation/screens/product_screen.dart';
 import 'package:furniture_ecommerce_app/features/products/presentation/screens/products_screen.dart';
 import 'package:furniture_ecommerce_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:furniture_ecommerce_app/features/search/presentation/screens/search_screen.dart';
@@ -68,7 +70,22 @@ GoRouter createRouter({
         ),
       ),
 
-      // ------------------ PROTECTED ROUTES ------------------
+      // ------------------ FULL-SCREEN ROUTES (no bottom nav) ------------------
+      GoRoute(
+        path: '/categories',
+        name: 'categories',
+        builder: (_, _) => const CategoriesScreen(),
+      ),
+      GoRoute(
+        path: '/product/:id',
+        name: 'product',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return ProductScreen(productId: id);
+        },
+      ),
+
+      // ------------------ PROTECTED ROUTES (with bottom nav) ------------------
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return MainScaffold(navigationShell: navigationShell);
@@ -80,7 +97,7 @@ GoRouter createRouter({
               GoRoute(
                 path: '/',
                 name: 'home',
-                builder: (_, __) => const HomeScreen(),
+                builder: (_, _) => const HomeScreen(),
               ),
             ],
           ),
@@ -91,7 +108,7 @@ GoRouter createRouter({
               GoRoute(
                 path: '/products',
                 name: 'products',
-                builder: (_, __) => const ProductsScreen(),
+                builder: (_, _) => const ProductsScreen(),
               ),
             ],
           ),
@@ -102,7 +119,7 @@ GoRouter createRouter({
               GoRoute(
                 path: '/cart',
                 name: 'cart',
-                builder: (_, __) => const CartScreen(),
+                builder: (_, _) => const CartScreen(),
               ),
             ],
           ),
@@ -113,7 +130,7 @@ GoRouter createRouter({
               GoRoute(
                 path: '/search',
                 name: 'search',
-                builder: (_, __) => const SearchScreen(),
+                builder: (_, _) => const SearchScreen(),
               ),
             ],
           ),
@@ -124,7 +141,7 @@ GoRouter createRouter({
               GoRoute(
                 path: '/profile',
                 name: 'profile',
-                builder: (_, __) => const ProfileScreen(),
+                builder: (_, _) => const ProfileScreen(),
               ),
             ],
           ),

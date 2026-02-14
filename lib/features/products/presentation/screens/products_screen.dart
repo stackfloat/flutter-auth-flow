@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:furniture_ecommerce_app/core/theme/app_colors.dart';
 import 'package:furniture_ecommerce_app/features/products/presentation/widgets/product_filter_sheet.dart';
 import 'package:furniture_ecommerce_app/features/products/presentation/widgets/product_grid_card.dart';
@@ -43,7 +44,10 @@ class ProductsScreen extends StatelessWidget {
                         imagePath: product.imagePath,
                         isFavorite: product.isFavorite,
                         onFavoriteTap: () {},
-                        onTap: () {},
+                        onTap: () => context.pushNamed(
+                          'product',
+                          pathParameters: {'id': product.id},
+                        ),
                       );
                     },
                   ),
@@ -68,12 +72,14 @@ class ProductsScreen extends StatelessWidget {
 }
 
 class _ProductUiModel {
+  final String id;
   final String title;
   final double price;
   final String imagePath;
   final bool isFavorite;
 
   const _ProductUiModel({
+    required this.id,
     required this.title,
     required this.price,
     required this.imagePath,
@@ -83,33 +89,39 @@ class _ProductUiModel {
 
 const _products = [
   _ProductUiModel(
+    id: '1',
     title: 'Teak Bench Sofa',
     price: 289.00,
     imagePath: 'assets/images/products/product_1.jpg',
     isFavorite: true,
   ),
   _ProductUiModel(
+    id: '2',
     title: 'Modern TV Unit',
     price: 349.00,
     imagePath: 'assets/images/products/product_2.jpg',
   ),
   _ProductUiModel(
+    id: '3',
     title: 'Blue Fabric Sofa',
     price: 499.00,
     imagePath: 'assets/images/products/product_3.jpeg',
   ),
   _ProductUiModel(
+    id: '4',
     title: 'Walnut Bedroom Set',
     price: 799.00,
     imagePath: 'assets/images/products/product_4.jpg',
     isFavorite: true,
   ),
   _ProductUiModel(
+    id: '5',
     title: 'Sectional Sofa',
     price: 629.00,
     imagePath: 'assets/images/products/product_5.jpeg',
   ),
   _ProductUiModel(
+    id: '6',
     title: 'Living Room Set',
     price: 549.00,
     imagePath: 'assets/images/products/product_6.png',

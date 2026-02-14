@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:furniture_ecommerce_app/core/theme/theme_extensions.dart';
 import 'package:furniture_ecommerce_app/features/home/presentation/widgets/category_card.dart';
 import 'package:furniture_ecommerce_app/features/home/presentation/widgets/header_basket_icon.dart';
@@ -43,9 +44,12 @@ class HomeScreen extends StatelessWidget {
                         'Categories',
                         style: context.typography.pageTitleMedium,
                       ),
-                      Text(
-                        'VIEW ALL',
-                        style: context.typography.pageTitleSmall,
+                      GestureDetector(
+                        onTap: () => context.pushNamed('categories'),
+                        child: Text(
+                          'VIEW ALL',
+                          style: context.typography.pageTitleSmall,
+                        ),
                       ),
                     ],
                   ),
