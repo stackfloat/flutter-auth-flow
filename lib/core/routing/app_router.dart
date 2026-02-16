@@ -10,6 +10,9 @@ import 'package:furniture_ecommerce_app/features/authentication/presentation/blo
 import 'package:furniture_ecommerce_app/features/authentication/presentation/screens/signin_screen.dart';
 import 'package:furniture_ecommerce_app/features/authentication/presentation/screens/signup_screen.dart';
 import 'package:furniture_ecommerce_app/features/cart/presentation/screens/cart_screen.dart';
+import 'package:furniture_ecommerce_app/features/checkout/presentation/screens/add_new_address_screen.dart';
+import 'package:furniture_ecommerce_app/features/checkout/presentation/screens/choose_address_screen.dart';
+import 'package:furniture_ecommerce_app/features/checkout/presentation/screens/payment_completed_screen.dart';
 import 'package:furniture_ecommerce_app/features/home/presentation/screens/home_screen.dart';
 import 'package:furniture_ecommerce_app/features/products/presentation/screens/categories_screen.dart';
 import 'package:furniture_ecommerce_app/features/products/presentation/screens/product_screen.dart';
@@ -29,10 +32,8 @@ GoRouter createRouter({
   return GoRouter(
     refreshListenable: GoRouterRefreshStream(authBloc.stream),
     initialLocation: initialLocation,
-    errorBuilder: (context, state) => NotFoundScreen(
-      error: state.error,
-      location: state.uri.toString(),
-    ),
+    errorBuilder: (context, state) =>
+        NotFoundScreen(error: state.error, location: state.uri.toString()),
     redirect: (context, state) {
       final authStatus = authBloc.state.status;
       final currentLocation = state.uri.path;
@@ -83,6 +84,22 @@ GoRouter createRouter({
           final id = state.pathParameters['id'] ?? '';
           return ProductScreen(productId: id);
         },
+      ),
+
+      GoRoute(
+        path: '/checkout/choose-address',
+        name: 'choose-address',
+        builder: (_, _) => const ChooseAddressScreen(),
+      ),
+      GoRoute(
+        path: '/checkout/add-new-address',
+        name: 'add-new-address',
+        builder: (_, _) => const AddNewAddressScreen(),
+      ),
+      GoRoute(
+        path: '/checkout/payment-completed',
+        name: 'payment-completed',
+        builder: (_, _) => const PaymentCompletedScreen(),
       ),
 
       // ------------------ PROTECTED ROUTES (with bottom nav) ------------------

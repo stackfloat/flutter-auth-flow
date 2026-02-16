@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:furniture_ecommerce_app/core/theme/app_colors.dart';
 import 'package:furniture_ecommerce_app/features/cart/presentation/widgets/cart_item_card.dart';
 import 'package:furniture_ecommerce_app/features/cart/presentation/widgets/cart_summary_section.dart';
+import 'package:go_router/go_router.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -81,7 +82,9 @@ class _CartScreenState extends State<CartScreen> {
             shippingFee: shippingFee,
             estimateTax: estimateTax,
             total: total,
-            onCheckout: () {},
+            onCheckout: () {
+                context.pushNamed('choose-address');
+            },
           ),
         ],
       ),
